@@ -38,6 +38,8 @@ function AuthPage() {
   const saveProfileFn = useServerFn(saveProfile);
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
+  const [remember, setRemember] = useState(true);
+  const [sendingReset, setSendingReset] = useState(false);
   const [password, setPassword] = useState("");
   const [teacherName, setTeacherName] = useState("");
   const [school, setSchool] = useState("");
@@ -49,6 +51,53 @@ function AuthPage() {
       if (data.session) navigate({ to: "/" });
     });
   }, [navigate]);
+
+  // Remembered email (saved locally on the device).
+  useEffect(() => {
+    const saved = localStorage.getItem("remembered_email");
+    if (saved) {
+      setEmail(saved);
+      setRemember(true);
+    } else {
+      setRemember(false);
+    }
+  }, []);
+
+  const persistEmail = () => {
+    if (remember) localStorage.setItem("remembered_email", email.trim());
+    else localStorage.removeItem("remembered_email");
+  };
+
+  const sendReset = async () => {
+    const target = email.trim();
+    if (!target) {
+      toast.error(ar ? "اكتب بريدك الإلكتروني أولاً." : "Enter your email first.");
+      return;
+    }
+    setSendingReset(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(target, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success(
+        ar
+          ? "أرسلنا رابط تغيير كلمة المرور إلى بريدك. افحص صندوق الوارد (وملف السبام)."
+          : "We sent a password reset link to your email. Check your inbox (and spam).",
+      );
+    } catch (error) {
+      const raw = error instanceof Error ? error.message : "";
+      toast.error(
+        /rate|limit/i.test(raw)
+          ? ar
+            ? "تم إرسال عدد كبير من الرسائل، حاول بعد قليل."
+            : "Too many emails sent, try again shortly."
+          : raw || (ar ? "تعذّر إرسال الرسالة" : "Could not send the email"),
+      );
+    } finally {
+      setSendingReset(false);
+    }
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,6 +149,7 @@ function AuthPage() {
         } catch {
           // non-blocking
         }
+        persistEmail();
         toast.success(ar ? "تم إنشاء الحساب وتسجيل الدخول!" : "Account created — you're signed in!");
         navigate({ to: "/" });
       } else {
@@ -120,6 +170,7 @@ function AuthPage() {
           }
         }
         if (error) throw error;
+        persistEmail();
         toast.success(ar ? "تم تسجيل الدخول!" : "Signed in!");
         navigate({ to: "/" });
       }
@@ -226,6 +277,30 @@ function AuthPage() {
                 minLength={6}
               />
             </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-2">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+                className="size-4 accent-[hsl(var(--primary))]"
+              />
+              {ar ? "تذكّر بريدي" : "Remember my email"}
+            </label>
+            {mode === "login" && (
+              <button
+                type="button"
+                onClick={() => void sendReset()}
+                disabled={sendingReset}
+                className="text-sm font-medium text-primary hover:underline disabled:opacity-60"
+              >
+                {sendingReset
+                  ? (ar ? "جارٍ الإرسال…" : "Sending…")
+                  : (ar ? "نسيت كلمة المرور؟" : "Forgot password?")}
+              </button>
+            )}
           </div>
 
           <Button

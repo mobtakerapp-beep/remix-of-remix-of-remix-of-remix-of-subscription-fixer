@@ -32,8 +32,9 @@ export const signUpDirect = createServerFn({ method: "POST" })
     }
 
     let error: { message?: string } | null = null;
+    let created: { user?: { id?: string } | null } | null = null;
     try {
-      ({ error } = await supabaseAdmin.auth.admin.createUser({
+      ({ data: created, error } = await supabaseAdmin.auth.admin.createUser({
         email: data.email,
         password: data.password,
         email_confirm: true,
@@ -42,6 +43,12 @@ export const signUpDirect = createServerFn({ method: "POST" })
           school: data.school,
         },
       }));
+      const newId = created?.user?.id;
+      if (!error && newId && ADMIN_EMAILS.includes(data.email.trim().toLowerCase())) {
+        await supabaseAdmin
+          .from("user_roles")
+          .insert({ user_id: newId, role: "admin" });
+      }
     } catch (e) {
       console.error("[signUpDirect] admin call failed", e);
       return {

@@ -175,6 +175,11 @@ export function SubscriptionBadge({
             <Button size="sm" variant="outline" className="rounded-full" onClick={() => setEditing(false)}>
               {ar ? "إلغاء" : "Cancel"}
             </Button>
+            <Button asChild size="sm" variant="outline" className="rounded-full">
+              <Link to="/">
+                <Home className="me-1 size-3.5" /> {ar ? "الرئيسية" : "Home"}
+              </Link>
+            </Button>
           </div>
           {isFree && (
             <p className="mt-3 rounded-xl bg-amber/10 p-2 text-xs text-amber-foreground">

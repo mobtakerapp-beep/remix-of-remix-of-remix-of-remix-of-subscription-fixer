@@ -89,16 +89,38 @@ function AuthPage() {
         toast.success(ar ? "تم إنشاء الحساب وتسجيل الدخول!" : "Account created — you're signed in!");
         navigate({ to: "/" });
       } else {
-        const { error } = await supabase.auth.signInWithPassword({
+        let { error } = await supabase.auth.signInWithPassword({
           email: email.trim(),
           password,
         });
+
+        // Older accounts may still be flagged as unconfirmed: confirm them
+        // server-side and retry once, so nobody is stuck on a confirmation email.
+        if (error && /confirm/i.test(error.message)) {
+          const fixed = await confirmEmail({ data: { email: email.trim() } });
+          if (fixed.ok) {
+            ({ error } = await supabase.auth.signInWithPassword({
+              email: email.trim(),
+              password,
+            }));
+          }
+        }
         if (error) throw error;
         toast.success(ar ? "تم تسجيل الدخول!" : "Signed in!");
         navigate({ to: "/" });
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Authentication failed");
+      const raw = error instanceof Error ? error.message : "";
+      const friendly = /invalid login credentials/i.test(raw)
+        ? ar
+          ? "البريد أو كلمة المرور غير صحيحة."
+          : "Invalid email or password."
+        : /weak|pwned/i.test(raw)
+          ? ar
+            ? "كلمة المرور ضعيفة أو مسرّبة، اختر كلمة مرور أقوى."
+            : "Password is too weak or leaked."
+          : raw || (ar ? "تعذّر إتمام العملية" : "Authentication failed");
+      toast.error(friendly);
     } finally {
       setLoading(false);
     }

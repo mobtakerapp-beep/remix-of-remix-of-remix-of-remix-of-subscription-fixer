@@ -8,3 +8,6 @@
   - [x] Arabic error messages (weak/leaked password, wrong credentials, email already used)
 - [x] Remove Google sign-in from the authentication screen
 - [x] Use server-side pre-confirmed email signup only, with no confirmation message
+
+
+

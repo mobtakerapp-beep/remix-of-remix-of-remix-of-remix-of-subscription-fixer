@@ -1,1 +1,2 @@
 - [Artifact server runtime](artifact-server-runtime.md) — TanStack server functions need the managed PORT and structured Nitro node-server production run.
+- [Deployment package manager](deployment-package-manager.md) — In this pnpm workspace, an extra Bun lockfile can make publishing choose Bun and fail before the build.

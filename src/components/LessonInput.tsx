@@ -1,4 +1,4 @@
-import { BookOpen, FileText, ImageIcon, Loader2, Sparkles, Type, UploadCloud, X } from "lucide-react";
+import { BookOpen, FileText, ImageIcon, Loader2, Sparkles, Type, UploadCloud, X, Youtube } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
@@ -7,14 +7,16 @@ import { Card } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useI18n } from "@/lib/i18n";
 import { lessonTemplates } from "@/lib/lesson-templates";
 import { fmtNum, isRtl } from "@/lib/lesson-types";
 
 export type GenerateArgs = {
-  mode: "text" | "pdf" | "image";
+  mode: "text" | "pdf" | "image" | "youtube";
   text?: string;
+  youtubeUrl?: string;
   fileName?: string;
   fileData?: string;
   mediaType?: string;
@@ -41,8 +43,9 @@ export function LessonInput({
   loading: boolean;
 }) {
   const { t, lang } = useI18n();
-  const [mode, setMode] = useState<"text" | "pdf" | "image">("text");
+  const [mode, setMode] = useState<"text" | "pdf" | "image" | "youtube">("text");
   const [text, setText] = useState("");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
@@ -69,6 +72,11 @@ export function LessonInput({
     if (mode === "text") {
       if (text.trim().length < 10) return void toast.error(t.errShortText);
       onGenerate({ mode, text, counts, language, numerals, grade });
+      return;
+    }
+    if (mode === "youtube") {
+      if (!parseYoutubeId(youtubeUrl)) return void toast.error(t.errYoutubeUrl);
+      onGenerate({ mode, youtubeUrl: youtubeUrl.trim(), counts, language, numerals, grade });
       return;
     }
     if (!file) return void toast.error(t.errNoFile);
@@ -188,7 +196,7 @@ export function LessonInput({
   return (
     <Card className="mx-auto w-full max-w-4xl rounded-3xl border-border/70 p-5 shadow-[var(--shadow-lift)] sm:p-7">
       <Tabs value={mode} onValueChange={(v) => setMode(v as typeof mode)}>
-        <TabsList className="grid h-auto w-full grid-cols-3 rounded-2xl p-1.5">
+        <TabsList className="grid h-auto w-full grid-cols-2 rounded-2xl p-1.5 sm:grid-cols-4">
           <TabsTrigger value="text" className="rounded-xl py-2.5">
             <Type className="me-2 size-4" /> {t.tabText}
           </TabsTrigger>
@@ -197,6 +205,9 @@ export function LessonInput({
           </TabsTrigger>
           <TabsTrigger value="image" className="rounded-xl py-2.5">
             <ImageIcon className="me-2 size-4" /> {t.tabImage}
+          </TabsTrigger>
+          <TabsTrigger value="youtube" className="rounded-xl py-2.5">
+            <Youtube className="me-2 size-4" /> {t.tabYoutube}
           </TabsTrigger>
         </TabsList>
 
@@ -216,6 +227,21 @@ export function LessonInput({
         <TabsContent value="image" className="mt-5">
           {dropZone("image")}
           {filePill}
+        </TabsContent>
+        <TabsContent value="youtube" className="mt-5">
+          <Input
+            dir="ltr"
+            type="url"
+            inputMode="url"
+            value={youtubeUrl}
+            onChange={(e) => setYoutubeUrl(e.target.value)}
+            placeholder={t.youtubePlaceholder}
+            className="h-12 rounded-2xl text-base"
+          />
+          <p className="mt-2 text-xs text-muted-foreground">{t.youtubeHint}</p>
+          {youtubeUrl.trim() !== "" && !parseYoutubeId(youtubeUrl) && (
+            <p className="mt-2 text-xs font-semibold text-destructive">{t.errYoutubeUrl}</p>
+          )}
         </TabsContent>
       </Tabs>
 

@@ -93,7 +93,6 @@ async function fetchTrackText(baseUrl: string): Promise<string> {
     .trim();
 }
 
-export type YoutubeTranscript = { videoId: string; title: string; text: string };
 
 /** Ask YouTube's internal player API for caption tracks (works when the watch HTML has none). */
 async function fetchInnertube(

@@ -212,25 +212,7 @@ function AuthPage() {
           </Button>
         </form>
 
-        <div className="my-4 flex items-center gap-3">
-          <div className="h-px flex-1 bg-border" />
-          <span className="text-xs text-muted-foreground">{ar ? "أو" : "or"}</span>
-          <div className="h-px flex-1 bg-border" />
-        </div>
-
-        <Button
-          type="button"
-          variant="outline"
-          size="lg"
-          className="w-full rounded-full"
-          onClick={signInWithGoogle}
-          disabled={loading}
-        >
-          <GoogleIcon />
-          {ar ? "المتابعة بجوجل" : "Continue with Google"}
-        </Button>
-
-        <div className="mt-4 text-center">
+        <div className="mt-6 text-center">
           <button
             type="button"
             className="text-sm font-medium text-primary hover:underline"

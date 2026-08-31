@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useI18n } from "@/lib/i18n";
 import { lessonTemplates } from "@/lib/lesson-templates";
 import { fmtNum, isRtl } from "@/lib/lesson-types";
+import { parseYoutubeId } from "@/lib/youtube-url";
 
 export type GenerateArgs = {
   mode: "text" | "pdf" | "image" | "youtube";

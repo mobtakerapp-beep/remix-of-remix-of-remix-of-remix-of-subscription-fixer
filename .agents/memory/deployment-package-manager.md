@@ -8,3 +8,5 @@ Publishing selects the package manager from the repository's package-manager mar
 **Why:** The workspace uses pnpm-specific lifecycle checks and a pnpm lockfile, while stale Bun markers caused the deployment installer to select Bun and reject the dependency graph.
 
 **How to apply:** When diagnosing a deployment failure during dependency installation, check for competing root lockfiles first. Keep only the lockfile for the package manager declared by the workspace.
+
+Do not add a `packageManager` pin unless the environment already has that exact pnpm release available; pnpm can try to self-install a different pinned release before running the workspace install.

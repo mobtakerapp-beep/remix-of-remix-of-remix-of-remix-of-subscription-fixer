@@ -54,16 +54,36 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
-        // Create the user as confirmed on the server, then sign in immediately.
-        const created = await createAccount({
-          data: {
+        // Preferred path: create the user as confirmed on the server.
+        let created: Awaited<ReturnType<typeof createAccount>>;
+        try {
+          created = await createAccount({
+            data: {
+              email: email.trim(),
+              password,
+              teacherName: teacherName.trim(),
+              school: school.trim(),
+            },
+          });
+        } catch {
+          created = { ok: false, code: "failed", message: "" };
+        }
+
+        // If the server path isn't available on this deployment, fall back to a
+        // normal signup (email confirmation is disabled on the backend).
+        if (!created.ok && created.code === "failed") {
+          const { error: signUpError } = await supabase.auth.signUp({
             email: email.trim(),
             password,
-            teacherName: teacherName.trim(),
-            school: school.trim(),
-          },
-        });
-        if (!created.ok) throw new Error(created.message);
+            options: {
+              emailRedirectTo: `${window.location.origin}/`,
+              data: { teacher_name: teacherName.trim(), school: school.trim() },
+            },
+          });
+          if (signUpError) throw signUpError;
+        } else if (!created.ok) {
+          throw new Error(created.message);
+        }
 
         const { error } = await supabase.auth.signInWithPassword({
           email: email.trim(),

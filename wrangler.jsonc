@@ -1,10 +1,22 @@
+
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "mulakhasy-ai",
   "compatibility_date": "2026-08-27",
   "compatibility_flags": ["nodejs_compat"],
+  "main": "./artifacts/subscription-fixer/.output/server/index.mjs",
+  "no_bundle": true,
   "assets": {
     "directory": "./artifacts/subscription-fixer/.output/public",
-    "not_found_handling": "none"
-  }
+    "not_found_handling": "none",
+    "binding": "ASSETS"
+  },
+  "rules": [
+    {
+      "type": "ESModule",
+      "globs": ["**/*.mjs", "**/*.js"]
+    }
+  ]
 }
+
+

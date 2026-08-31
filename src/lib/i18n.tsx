@@ -194,6 +194,12 @@ const dict = {
     signInRequired: "Please sign in first to generate lessons.",
     googleSignIn: "Continue with Google",
     orContinueWith: "or sign in with email",
+    tabYoutube: "YouTube link",
+    youtubePlaceholder: "Paste a YouTube video link here…",
+    youtubeHint: "We fetch the video captions and turn them into a lesson with questions.",
+    errYoutubeUrl: "Invalid YouTube link",
+    errYoutubeCaptions: "This video has no captions. Try another video.",
+    errYoutubeFetch: "Could not fetch the video, please try again.",
   },
 };
 

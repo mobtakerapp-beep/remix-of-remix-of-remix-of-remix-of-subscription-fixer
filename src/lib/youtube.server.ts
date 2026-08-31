@@ -93,6 +93,60 @@ async function fetchTrackText(baseUrl: string): Promise<string> {
     .trim();
 }
 
+
+/** Ask YouTube's internal player API for caption tracks (works when the watch HTML has none). */
+async function fetchInnertube(
+  videoId: string,
+): Promise<{ title: string; tracks: CaptionTrack[] } | null> {
+  const clients = [
+    {
+      key: "AIzaSyA8eiZmM1FaDVjRy-df2KTyQ_vz_yYM39w",
+      context: {
+        client: {
+          clientName: "ANDROID",
+          clientVersion: "19.09.37",
+          androidSdkVersion: 30,
+          hl: "en",
+          },
+      },
+      ua: "com.google.android.youtube/19.09.37 (Linux; U; Android 11) gzip",
+    },
+    {
+      key: "AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8",
+      context: { client: { clientName: "WEB", clientVersion: "2.20240401.00.00", hl: "en" } },
+      ua: UA,
+    },
+  ];
+
+  for (const c of clients) {
+    try {
+      const res = await fetch(
+        `https://www.youtube.com/youtubei/v1/player?key=${c.key}&prettyPrint=false`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "User-Agent": c.ua },
+          body: JSON.stringify({ videoId, context: c.context }),
+        },
+      );
+      if (!res.ok) continue;
+      const json = (await res.json()) as {
+        videoDetails?: { title?: string };
+        captions?: {
+          playerCaptionsTracklistRenderer?: { captionTracks?: CaptionTrack[] };
+        };
+      };
+      const tracks =
+        json.captions?.playerCaptionsTracklistRenderer?.captionTracks ?? [];
+      if (tracks.length > 0) {
+        return { title: json.videoDetails?.title ?? "", tracks };
+      }
+    } catch {
+      /* try next client */
+    }
+  }
+  return null;
+}
+
 export type YoutubeTranscript = { videoId: string; title: string; text: string };
 
 /** Throws `youtube_invalid_url` or `youtube_no_captions` on failure. */
@@ -100,34 +154,59 @@ export async function fetchYoutubeTranscript(input: string): Promise<YoutubeTran
   const videoId = parseYoutubeId(input);
   if (!videoId) throw new Error("youtube_invalid_url");
 
-  const res = await fetch(`https://www.youtube.com/watch?v=${videoId}&hl=en`, {
-    headers: {
-      "User-Agent": UA,
-      "Accept-Language": "en-US,en;q=0.9,ar;q=0.8",
-    },
-  });
-  if (!res.ok) throw new Error("youtube_fetch_failed");
-  const html = await res.text();
+  let title = "";
+  let tracks: CaptionTrack[] = [];
 
-  const titleMatch =
-    html.match(/<meta\s+name="title"\s+content="([^"]*)"/) ??
-    html.match(/<title>([^<]*)<\/title>/);
-  const title = decodeEntities(titleMatch?.[1] ?? "").replace(/\s*-\s*YouTube$/, "").trim();
+  try {
+    const res = await fetch(`https://www.youtube.com/watch?v=${videoId}&hl=en`, {
+      headers: {
+        "User-Agent": UA,
+        "Accept-Language": "en-US,en;q=0.9,ar;q=0.8",
+      },
+    });
+    if (res.ok) {
+      const html = await res.text();
+      const titleMatch =
+        html.match(/<meta\s+name="title"\s+content="([^"]*)"/) ??
+        html.match(/<title>([^<]*)<\/title>/);
+      title = decodeEntities(titleMatch?.[1] ?? "").replace(/\s*-\s*YouTube$/, "").trim();
+      tracks = extractJson<CaptionTrack[]>(html, '"captionTracks"') ?? [];
+    }
+  } catch {
+    /* fall back to innertube */
+  }
 
-  const tracks = extractJson<CaptionTrack[]>(html, '"captionTracks"');
-  if (!tracks || tracks.length === 0) throw new Error("youtube_no_captions");
+  if (tracks.length === 0) {
+    const alt = await fetchInnertube(videoId);
+    if (alt) {
+      tracks = alt.tracks;
+      title = title || alt.title;
+    }
+  }
+
+  if (tracks.length === 0) throw new Error("youtube_no_captions");
 
   // Prefer Arabic, then English, then manual, then anything.
-  const pick =
-    tracks.find((tr) => tr.languageCode === "ar" && tr.kind !== "asr") ??
-    tracks.find((tr) => tr.languageCode === "ar") ??
-    tracks.find((tr) => tr.languageCode?.startsWith("en") && tr.kind !== "asr") ??
-    tracks.find((tr) => tr.languageCode?.startsWith("en")) ??
-    tracks.find((tr) => tr.kind !== "asr") ??
-    tracks[0]!;
+  const ordered = [
+    tracks.find((tr) => tr.languageCode === "ar" && tr.kind !== "asr"),
+    tracks.find((tr) => tr.languageCode === "ar"),
+    tracks.find((tr) => tr.languageCode?.startsWith("en") && tr.kind !== "asr"),
+    tracks.find((tr) => tr.languageCode?.startsWith("en")),
+    tracks.find((tr) => tr.kind !== "asr"),
+    ...tracks,
+  ].filter((t): t is CaptionTrack => Boolean(t?.baseUrl));
 
-  const text = await fetchTrackText(pick.baseUrl);
+  let text = "";
+  const seen = new Set<string>();
+  for (const track of ordered) {
+    if (seen.has(track.baseUrl)) continue;
+    seen.add(track.baseUrl);
+    text = await fetchTrackText(track.baseUrl);
+    if (text.length >= 40) break;
+  }
+
   if (text.length < 40) throw new Error("youtube_no_captions");
 
   return { videoId, title: title || "YouTube", text: text.slice(0, 40000) };
 }
+

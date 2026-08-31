@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite dev --host 0.0.0.0",
     "build": "NITRO_PRESET=node-server vite build",
+    "build:cloudflare": "NITRO_PRESET=cloudflare_module vite build",
     "build:dev": "NITRO_PRESET=node-server vite build --mode development",
     "preview": "node .output/server/index.mjs",
     "lint": "eslint .",

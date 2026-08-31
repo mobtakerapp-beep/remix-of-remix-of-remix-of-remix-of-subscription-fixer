@@ -14,6 +14,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 import { confirmExistingEmail, signUpDirect } from "@/lib/auth.functions";
 import { useI18n } from "@/lib/i18n";
+import { saveProfile } from "@/lib/subscription.functions";
 
 export const Route = createFileRoute("/auth/")({
   head: () => ({
@@ -34,6 +35,7 @@ function AuthPage() {
   const navigate = useNavigate();
   const createAccount = useServerFn(signUpDirect);
   const confirmEmail = useServerFn(confirmExistingEmail);
+  const saveProfileFn = useServerFn(saveProfile);
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

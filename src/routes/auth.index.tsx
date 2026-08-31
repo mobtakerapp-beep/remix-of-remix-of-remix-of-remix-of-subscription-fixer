@@ -66,16 +66,25 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email: email.trim(),
-          password,
-          options: {
-            data: { teacher_name: teacherName, school },
-            emailRedirectTo: window.location.origin,
+        // Account is created server-side with the email already confirmed,
+        // so there is no confirmation email step.
+        const result = await createAccount({
+          data: {
+            email: email.trim(),
+            password,
+            teacherName: teacherName.trim(),
+            school: school.trim(),
           },
         });
+        if (!result.ok) throw new Error(result.message);
+
+        const { error } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
         if (error) throw error;
-        toast.success(ar ? "تم إنشاء الحساب! تحقق من بريدك لتأكيد التسجيل." : "Account created! Check your email to confirm.");
+        toast.success(ar ? "تم إنشاء الحساب وتسجيل الدخول!" : "Account created — you're signed in!");
+        navigate({ to: "/" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email: email.trim(),

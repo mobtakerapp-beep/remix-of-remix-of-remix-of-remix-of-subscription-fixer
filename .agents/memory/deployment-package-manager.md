@@ -7,6 +7,6 @@ Publishing selects the package manager from the repository's package-manager mar
 
 **Why:** The workspace uses pnpm-specific lifecycle checks and a pnpm lockfile, while stale Bun markers caused the deployment installer to select Bun and reject the dependency graph.
 
-**How to apply:** When diagnosing a deployment failure during dependency installation, check for competing root lockfiles first. Keep only the lockfile for the package manager declared by the workspace. Prefer the hosting packager setting over a packageManager version pin when local and hosting pnpm versions differ.
+**How to apply:** When diagnosing a deployment failure during dependency installation, check for competing root lockfiles first. Keep only the lockfile for the package manager declared by the workspace. If hosting exposes a known pnpm version, declare that exact version and regenerate the lockfile with it before using frozen installs.
 
 Do not add a `packageManager` pin unless the environment already has that exact pnpm release available; when the hosting image exposes that exact release, pair the pin with `manage-package-manager-versions=false` so the local pnpm wrapper does not self-install a different version.

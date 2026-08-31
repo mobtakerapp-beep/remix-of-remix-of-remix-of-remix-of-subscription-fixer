@@ -1,0 +1,95 @@
+2026-08-31T18:05:07.719Z	Initializing build environment...
+2026-08-31T18:05:09.594Z	Success: Finished initializing build environment
+2026-08-31T18:05:10.395Z	Cloning repository...
+2026-08-31T18:05:14.148Z	Detected the following tools from environment: pnpm@10.11.1, nodejs@24.18.0
+2026-08-31T18:05:14.150Z	Installing project dependencies: pnpm install --frozen-lockfile
+2026-08-31T18:05:14.281Z	! Corepack is about to download https://registry.npmjs.org/pnpm/-/pnpm-10.11.1.tgz
+2026-08-31T18:05:15.437Z	(node:587) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-08-31T18:05:15.437Z	(Use `node --trace-deprecation ...` to show where the warning was created)
+2026-08-31T18:05:15.439Z	Scope: all 9 workspace projects
+2026-08-31T18:05:15.509Z	Lockfile is up to date, resolution step is skipped
+2026-08-31T18:05:15.580Z	Progress: resolved 1, reused 0, downloaded 0, added 0
+2026-08-31T18:05:15.630Z	Packages: +761
+2026-08-31T18:05:15.630Z	++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+2026-08-31T18:05:16.580Z	Progress: resolved 761, reused 0, downloaded 116, added 37
+2026-08-31T18:05:17.581Z	Progress: resolved 761, reused 0, downloaded 288, added 294
+2026-08-31T18:05:18.581Z	Progress: resolved 761, reused 0, downloaded 299, added 298
+2026-08-31T18:05:19.582Z	Progress: resolved 761, reused 0, downloaded 341, added 314
+2026-08-31T18:05:20.584Z	Progress: resolved 761, reused 0, downloaded 392, added 358
+2026-08-31T18:05:21.583Z	Progress: resolved 761, reused 0, downloaded 433, added 374
+2026-08-31T18:05:22.584Z	Progress: resolved 761, reused 0, downloaded 495, added 395
+2026-08-31T18:05:18.581Z	Progress: resolved 761, reused 0, downloaded 299, added 298
+2026-08-31T18:05:19.582Z	Progress: resolved 761, reused 0, downloaded 341, added 314
+2026-08-31T18:05:20.584Z	Progress: resolved 761, reused 0, downloaded 392, added 358
+2026-08-31T18:05:21.583Z	Progress: resolved 761, reused 0, downloaded 433, added 374
+2026-08-31T18:05:22.584Z	Progress: resolved 761, reused 0, downloaded 495, added 395
+2026-08-31T18:05:23.584Z	Progress: resolved 761, reused 0, downloaded 619, added 518
+2026-08-31T18:05:24.405Z	Progress: resolved 761, reused 0, downloaded 692, added 761, done
+2026-08-31T18:05:24.609Z	.../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+2026-08-31T18:05:24.679Z	.../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+2026-08-31T18:05:25.075Z	
+2026-08-31T18:05:25.075Z	dependencies:
+2026-08-31T18:05:25.075Z	+ @replit/connectors-sdk 0.4.1
+2026-08-31T18:05:25.076Z	
+2026-08-31T18:05:25.076Z	devDependencies:
+2026-08-31T18:05:25.076Z	+ prettier 3.9.6
+2026-08-31T18:05:25.076Z	+ typescript 5.9.3
+2026-08-31T18:05:25.076Z	
+2026-08-31T18:05:25.076Z	╭ Warning ─────────────────────────────────────────────────────────────────────╮
+2026-08-31T18:05:25.076Z	│                                                                              │
+2026-08-31T18:05:25.076Z	│   Ignored build scripts: core-js.                                            │
+2026-08-31T18:05:25.076Z	│   Run "pnpm approve-builds" to pick which dependencies should be allowed     │
+2026-08-31T18:05:25.076Z	│   to run scripts.                                                            │
+2026-08-31T18:05:25.076Z	│                                                                              │
+2026-08-31T18:05:25.077Z	╰──────────────────────────────────────────────────────────────────────────────╯
+2026-08-31T18:05:25.077Z	
+2026-08-31T18:05:25.126Z	. preinstall$ sh -c 'rm -f package-lock.json yarn.lock; case "$npm_config_user_agent" in pnpm/*) ;; *) echo "Use pnpm instead" >&2; exit 1 ;; esac'
+2026-08-31T18:05:25.135Z	. preinstall: Done
+2026-08-31T18:05:25.257Z	Done in 10.1s using pnpm v10.11.1
+2026-08-31T18:05:25.518Z	Executing user build command: npm run build
+2026-08-31T18:05:25.703Z	npm warn Unknown project config "auto-install-peers". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+2026-08-31T18:05:25.704Z	npm warn Unknown project config "strict-peer-dependencies". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+2026-08-31T18:05:25.704Z	npm warn Unknown project config "manage-package-manager-versions". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+2026-08-31T18:05:25.716Z	
+2026-08-31T18:05:25.716Z	> workspace@0.0.0 build
+2026-08-31T18:05:25.716Z	> pnpm run typecheck && pnpm -r --if-present run build
+2026-08-31T18:05:25.716Z	
+2026-08-31T18:05:26.001Z	
+2026-08-31T18:05:26.001Z	> workspace@0.0.0 typecheck /opt/buildhome/repo
+2026-08-31T18:05:26.001Z	> pnpm run typecheck:libs && pnpm -r --filter "./artifacts/**" --filter "./scripts" --if-present run typecheck
+2026-08-31T18:05:26.001Z	
+2026-08-31T18:05:26.281Z	
+2026-08-31T18:05:26.281Z	> workspace@0.0.0 typecheck:libs /opt/buildhome/repo
+2026-08-31T18:05:26.281Z	> tsc --build
+2026-08-31T18:05:26.281Z	
+2026-08-31T18:05:28.338Z	(node:903) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-08-31T18:05:28.344Z	(Use `node --trace-deprecation ...` to show where the warning was created)
+2026-08-31T18:05:28.344Z	Scope: 4 of 9 workspace projects
+2026-08-31T18:05:28.357Z	artifacts/api-server typecheck$ tsc -p tsconfig.json --noEmit
+2026-08-31T18:05:28.358Z	artifacts/mockup-sandbox typecheck$ tsc -p tsconfig.json --noEmit
+2026-08-31T18:05:29.911Z	artifacts/api-server typecheck: Done
+2026-08-31T18:05:29.913Z	scripts typecheck$ tsc -p tsconfig.json --noEmit
+2026-08-31T18:05:30.971Z	scripts typecheck: Done
+2026-08-31T18:05:33.240Z	artifacts/mockup-sandbox typecheck: Done
+2026-08-31T18:05:33.586Z	(node:955) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-08-31T18:05:33.586Z	(Use `node --trace-deprecation ...` to show where the warning was created)
+2026-08-31T18:05:33.590Z	Scope: 8 of 9 workspace projects
+2026-08-31T18:05:33.592Z	artifacts/mockup-sandbox build$ vite build
+2026-08-31T18:05:33.593Z	artifacts/subscription-fixer build$ NITRO_PRESET=node-server vite build
+2026-08-31T18:05:33.927Z	artifacts/mockup-sandbox build: failed to load config from /opt/buildhome/repo/artifacts/mockup-sandbox/vite.config.ts
+2026-08-31T18:05:33.931Z	artifacts/mockup-sandbox build: error during build:
+2026-08-31T18:05:33.932Z	artifacts/mockup-sandbox build: Error: PORT environment variable is required but was not provided.
+2026-08-31T18:05:33.932Z	artifacts/mockup-sandbox build:     at file:///opt/buildhome/repo/artifacts/mockup-sandbox/node_modules/.vite-temp/vite.config.ts.timestamp-1788199533798-0d5542c6bfdfb.mjs:145:9
+2026-08-31T18:05:33.932Z	artifacts/mockup-sandbox build:     at ModuleJob.run (node:internal/modules/esm/module_job:439:25)
+2026-08-31T18:05:33.932Z	artifacts/mockup-sandbox build:     at async node:internal/modules/esm/loader:643:26
+2026-08-31T18:05:33.932Z	artifacts/mockup-sandbox build:     at async loadConfigFromBundledFile (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.1_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35996:12)
+2026-08-31T18:05:33.933Z	artifacts/mockup-sandbox build:     at async bundleAndLoadConfigFile (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.1_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35884:17)
+2026-08-31T18:05:33.933Z	artifacts/mockup-sandbox build:     at async loadConfigFromFile (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.1_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35851:42)
+2026-08-31T18:05:33.933Z	artifacts/mockup-sandbox build:     at async resolveConfig (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.1_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:35500:22)
+2026-08-31T18:05:33.934Z	artifacts/mockup-sandbox build:     at async createBuilder (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.1_yaml@2.9.0/node_modules/vite/dist/node/chunks/config.js:33955:19)
+2026-08-31T18:05:33.934Z	artifacts/mockup-sandbox build:     at async CAC.<anonymous> (file:///opt/buildhome/repo/node_modules/.pnpm/vite@7.3.6_@types+node@25.9.5_jiti@2.7.0_lightningcss@1.32.0_tsx@4.23.1_yaml@2.9.0/node_modules/vite/dist/node/cli.js:629:10)
+2026-08-31T18:05:33.951Z	artifacts/mockup-sandbox build: Failed
+2026-08-31T18:05:33.963Z	/opt/buildhome/repo/artifacts/mockup-sandbox:
+2026-08-31T18:05:33.963Z	 ERR_PNPM_RECURSIVE_RUN_FIRST_FAIL  @workspace/mockup-sandbox@2.0.0 build: `vite build`
+2026-08-31T18:05:33.963Z	Exit status 1
+2026-08-31T18:05:33.995Z	Failed: error occurred while running build command

@@ -263,8 +263,8 @@ function WelcomePage() {
           </h2>
           <p className="mt-2 text-sm opacity-90 sm:text-base">
             {ar
-              ? "سجّلي بحساب Google وابدئي أول درس خلال دقيقة."
-              : "Sign in with Google and build your first lesson in a minute."}
+              ? "أنشئي حسابك بالبريد الإلكتروني وابدئي أول درس خلال دقيقة."
+              : "Create your account with email and build your first lesson in a minute."}
           </p>
           <Button asChild size="lg" variant="secondary" className="mt-5 rounded-full px-8">
             <Link to="/auth">{ar ? "إنشاء حساب" : "Create an account"}</Link>

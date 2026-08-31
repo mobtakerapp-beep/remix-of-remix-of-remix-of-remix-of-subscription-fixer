@@ -108,7 +108,7 @@ async function fetchInnertube(
           clientVersion: "19.09.37",
           androidSdkVersion: 30,
           hl: "en",
-઀        },
+          },
       },
       ua: "com.google.android.youtube/19.09.37 (Linux; U; Android 11) gzip",
     },

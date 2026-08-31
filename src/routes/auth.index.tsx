@@ -70,17 +70,29 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
-        // Account is created server-side with the email already confirmed,
-        // so there is no confirmation email step.
-        const result = await createAccount({
-          data: {
-            email: email.trim(),
-            password,
-            teacherName: teacherName.trim(),
-            school: school.trim(),
-          },
+        // Goal: the account is saved and the user is signed in immediately,
+        // with no email-confirmation step.
+        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+          email: email.trim(),
+          password,
+          options: { data: { teacher_name: teacherName.trim(), school: school.trim() } },
         });
-        if (!result.ok) throw new Error(result.message);
+        if (signUpError) throw signUpError;
+
+        if (!signUpData.session) {
+          // Confirmation is still enforced by the backend: create/confirm the
+          // account server-side so the user never opens a confirmation email.
+          const created = await createAccount({
+            data: {
+              email: email.trim(),
+              password,
+              teacherName: teacherName.trim(),
+              school: school.trim(),
+            },
+          });
+          if (!created.ok && created.code !== "email_exists") throw new Error(created.message);
+          await confirmEmail({ data: { email: email.trim() } });
+        }
 
         const { error } = await supabase.auth.signInWithPassword({
           email: email.trim(),

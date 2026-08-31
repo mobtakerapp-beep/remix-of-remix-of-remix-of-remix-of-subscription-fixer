@@ -13,7 +13,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 
-import { signUpDirect } from "@/lib/auth.functions";
+import { confirmExistingEmail, signUpDirect } from "@/lib/auth.functions";
 import { useI18n } from "@/lib/i18n";
 
 // Use Lovable's managed OAuth broker. Google returns to Lovable's
@@ -49,6 +49,7 @@ function AuthPage() {
   const { t, lang } = useI18n();
   const navigate = useNavigate();
   const createAccount = useServerFn(signUpDirect);
+  const confirmEmail = useServerFn(confirmExistingEmail);
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

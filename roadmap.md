@@ -6,4 +6,5 @@
   - [x] Server-side account creation with email pre-confirmed (needs SUPABASE_SERVICE_ROLE_KEY)
   - [x] Auto-confirm + retry for older accounts stuck on "Email not confirmed"
   - [x] Arabic error messages (weak/leaked password, wrong credentials, email already used)
-- [ ] Owner action: turn off "Confirm email" in the auth settings, or add SUPABASE_SERVICE_ROLE_KEY to the Cloudflare Worker variables
+- [x] Remove Google sign-in from the authentication screen
+- [x] Use server-side pre-confirmed email signup only, with no confirmation message

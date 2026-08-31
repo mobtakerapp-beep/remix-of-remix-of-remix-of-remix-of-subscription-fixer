@@ -10,15 +10,10 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toaster } from "@/components/ui/sonner";
-import { lovable } from "@/integrations/lovable/index";
 import { supabase } from "@/integrations/supabase/client";
 
 import { confirmExistingEmail, signUpDirect } from "@/lib/auth.functions";
 import { useI18n } from "@/lib/i18n";
-
-// Use Lovable's managed OAuth broker. Google returns to Lovable's
-// https://oauth.lovable.app/callback, then the broker sends the user back to
-// the current app origin. No manual Google redirect URL changes needed.
 
 export const Route = createFileRoute("/auth/")({
   head: () => ({
@@ -33,17 +28,6 @@ export const Route = createFileRoute("/auth/")({
   }),
   component: AuthPage,
 });
-
-function GoogleIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" aria-hidden="true">
-      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.27-4.74 3.27-8.1z" />
-      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z" />
-      <path fill="#FBBC05" d="M5.84 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.18a11 11 0 0 0 0 9.88l3.66-2.84z" />
-      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84C6.71 7.3 9.14 5.38 12 5.38z" />
-    </svg>
-  );
-}
 
 function AuthPage() {
   const { t, lang } = useI18n();
@@ -70,29 +54,16 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
-        // Goal: the account is saved and the user is signed in immediately,
-        // with no email-confirmation step.
-        const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-          email: email.trim(),
-          password,
-          options: { data: { teacher_name: teacherName.trim(), school: school.trim() } },
+        // Create the user as confirmed on the server, then sign in immediately.
+        const created = await createAccount({
+          data: {
+            email: email.trim(),
+            password,
+            teacherName: teacherName.trim(),
+            school: school.trim(),
+          },
         });
-        if (signUpError) throw signUpError;
-
-        if (!signUpData.session) {
-          // Confirmation is still enforced by the backend: create/confirm the
-          // account server-side so the user never opens a confirmation email.
-          const created = await createAccount({
-            data: {
-              email: email.trim(),
-              password,
-              teacherName: teacherName.trim(),
-              school: school.trim(),
-            },
-          });
-          if (!created.ok && created.code !== "email_exists") throw new Error(created.message);
-          await confirmEmail({ data: { email: email.trim() } });
-        }
+        if (!created.ok) throw new Error(created.message);
 
         const { error } = await supabase.auth.signInWithPassword({
           email: email.trim(),
@@ -139,30 +110,6 @@ function AuthPage() {
     }
   };
 
-  const signInWithGoogle = async () => {
-    setLoading(true);
-    try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-        extraParams: { prompt: "select_account" },
-      });
-
-      if (result.error) throw result.error;
-      if (result.redirected) return; // browser is heading to Google
-
-      // In the preview iframe tokens are returned directly.
-      toast.success(ar ? "تم تسجيل الدخول!" : "Signed in!");
-      navigate({ to: "/" });
-    } catch (error) {
-      const raw = error instanceof Error ? error.message : String(error ?? "");
-      console.error("Google sign-in failed:", error);
-      toast.error(raw || (ar ? "فشل تسجيل الدخول بجوجل" : "Google sign-in failed"));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-
   return (
     <main className="blob-bg flex min-h-screen items-center justify-center bg-background p-4">
       <Toaster position="top-center" />
@@ -186,25 +133,7 @@ function AuthPage() {
           </p>
         </div>
 
-        <Button
-          type="button"
-          variant="outline"
-          size="lg"
-          className="mt-6 w-full rounded-full"
-          onClick={() => void signInWithGoogle()}
-          disabled={loading}
-        >
-          <GoogleIcon className="me-2 h-5 w-5 shrink-0" />
-          {t.googleSignIn}
-        </Button>
-
-        <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="h-px flex-1 bg-border" />
-          {t.orContinueWith}
-          <span className="h-px flex-1 bg-border" />
-        </div>
-
-        <form onSubmit={submit} className="space-y-4">
+        <form onSubmit={submit} className="mt-6 space-y-4">
           {mode === "signup" && (
             <>
               <div className="space-y-1.5">

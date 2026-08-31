@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
+const ADMIN_EMAILS = ["uuxz272@gmail.com"];
+
 const signUpSchema = z.object({
   email: z.string().trim().email().max(255),
   password: z.string().min(6).max(72),

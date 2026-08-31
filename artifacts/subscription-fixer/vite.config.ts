@@ -7,10 +7,12 @@ export default defineConfig({
     host: "0.0.0.0",
     port,
     strictPort: true,
+    allowedHosts: [".replit.dev", "localhost"],
   },
   preview: {
     host: "0.0.0.0",
     port,
     strictPort: true,
+    allowedHosts: [".replit.dev", "localhost"],
   },
 });

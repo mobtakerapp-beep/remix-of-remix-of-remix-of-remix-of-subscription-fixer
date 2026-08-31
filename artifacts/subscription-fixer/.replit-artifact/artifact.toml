@@ -1,0 +1,36 @@
+kind = "web"
+previewPath = "/"
+title = "Subscription Fixer"
+description = "A lesson generator that accepts lesson text, files, images, and YouTube links and turns them into interactive learning materials."
+version = "1.0.0"
+id = "artifacts/subscription-fixer"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18558
+
+[services.development]
+run = "pnpm --filter @workspace/subscription-fixer run dev"
+
+[services.production]
+
+[services.production.build]
+args = ["pnpm", "--filter", "@workspace/subscription-fixer", "run", "build"]
+
+[services.production.build.env]
+NODE_ENV = "production"
+
+[services.production.run]
+args = ["node", "--enable-source-maps", "artifacts/subscription-fixer/.output/server/index.mjs"]
+
+[services.production.run.env]
+PORT = "18558"
+NODE_ENV = "production"
+
+[services.production.health.startup]
+path = "/"
+[services.env]
+PORT = "18558"
+BASE_PATH = "/"

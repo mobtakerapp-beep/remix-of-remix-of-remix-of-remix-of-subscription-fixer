@@ -48,24 +48,6 @@ function AuthPage() {
     });
   }, [navigate]);
 
-  const signInWithGoogle = async () => {
-    setLoading(true);
-    try {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-      });
-      if (result.error) throw result.error;
-      if (result.redirected) return;
-      toast.success(ar ? "تم تسجيل الدخول!" : "Signed in!");
-      navigate({ to: "/" });
-    } catch (error) {
-      toast.error(
-        error instanceof Error ? error.message : ar ? "تعذّر تسجيل الدخول بجوجل" : "Google sign-in failed",
-      );
-      setLoading(false);
-    }
-  };
-
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim() || !password.trim()) return;

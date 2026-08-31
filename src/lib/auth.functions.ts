@@ -51,3 +51,39 @@ export const signUpDirect = createServerFn({ method: "POST" })
     console.error("[signUpDirect]", error);
     return { ok: false, code: "failed", message: "تعذّر إنشاء الحساب، حاول مرة أخرى." };
   });
+
+const emailSchema = z.object({ email: z.string().trim().email().max(255) });
+
+/**
+ * Marks an existing account's email as confirmed. Used to unblock accounts
+ * that were created before confirmation was turned off.
+ */
+export const confirmExistingEmail = createServerFn({ method: "POST" })
+  .inputValidator((input: unknown) => emailSchema.parse(input))
+  .handler(async ({ data }): Promise<{ ok: boolean }> => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const { data: list, error: listError } = await supabaseAdmin.auth.admin.listUsers({
+      page: 1,
+      perPage: 200,
+    });
+    if (listError) {
+      console.error("[confirmExistingEmail] list", listError);
+      return { ok: false };
+    }
+
+    const target = list.users.find(
+      (u) => (u.email ?? "").toLowerCase() === data.email.toLowerCase(),
+    );
+    if (!target) return { ok: false };
+    if (target.email_confirmed_at) return { ok: true };
+
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(target.id, {
+      email_confirm: true,
+    });
+    if (error) {
+      console.error("[confirmExistingEmail] update", error);
+      return { ok: false };
+    }
+    return { ok: true };
+  });

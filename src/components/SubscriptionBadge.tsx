@@ -25,6 +25,7 @@ export function SubscriptionBadge({
   const saveProfileFn = useServerFn(saveProfile);
   const fetchAdmin = useServerFn(amIAdmin);
   const [status, setStatus] = useState<SubscriptionStatus | null>(null);
+  const [signedIn, setSignedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [editing, setEditing] = useState(false);
   const [teacherName, setTeacherName] = useState("");
@@ -35,7 +36,11 @@ export function SubscriptionBadge({
     void (async () => {
       try {
         const { data: sess } = await supabase.auth.getSession();
-        if (!sess.session) return;
+        if (!sess.session) {
+          setSignedIn(false);
+          return;
+        }
+        setSignedIn(true);
         const s = await fetchSub({ data: undefined } as never);
         setStatus(s);
         setIsPremium(s.plan !== "free" && s.status === "active");
@@ -71,9 +76,11 @@ export function SubscriptionBadge({
     }
   };
 
-  if (!status) return null;
+  // Show the header actions for any signed-in user, even if the
+  // subscription status failed to load.
+  if (!signedIn) return null;
 
-  const isFree = status.plan === "free";
+  const isFree = !status || status.plan === "free";
 
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -86,9 +93,13 @@ export function SubscriptionBadge({
       >
         {isFree ? <Zap className="size-3.5" /> : <Crown className="size-3.5" />}
         {isFree
-          ? ar
-            ? `مجاني — بقيت ${status.remainingToday} محاولة هذا الشهر`
-            : `Free — ${status.remainingToday} left this month`
+          ? status
+            ? ar
+              ? `مجاني — بقيت ${status.remainingToday} محاولة هذا الشهر`
+              : `Free — ${status.remainingToday} left this month`
+            : ar
+              ? "حسابي"
+              : "My account"
           : ar
             ? "اشتراك مميز — غير محدود"
             : "Premium — unlimited"}

@@ -121,6 +121,12 @@ function Home() {
         toast.error(t.limitReached);
       } else if (msg === "subscription_expired") {
         toast.error(t.subscriptionExpired);
+      } else if (msg === "youtube_invalid_url") {
+        toast.error(t.errYoutubeUrl);
+      } else if (msg === "youtube_no_captions") {
+        toast.error(t.errYoutubeCaptions);
+      } else if (msg === "youtube_fetch_failed") {
+        toast.error(t.errYoutubeFetch);
       } else if (msg === "Unauthorized" || /unauthorized|401/i.test(msg)) {
         toast.error(t.signInRequired);
         setTimeout(() => (window.location.href = "/auth"), 900);

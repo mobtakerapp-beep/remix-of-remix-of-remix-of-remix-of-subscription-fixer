@@ -5,8 +5,9 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getSubscriptionStatus } from "./subscription.server";
 
 const InputSchema = z.object({
-  mode: z.enum(["text", "pdf", "image"]),
+  mode: z.enum(["text", "pdf", "image", "youtube"]),
   text: z.string().optional(),
+  youtubeUrl: z.string().optional(),
   fileName: z.string().optional(),
   /** data URL, e.g. data:application/pdf;base64,... */
   fileData: z.string().optional(),
@@ -39,5 +40,17 @@ export const generateLessonPackage = createServerFn({ method: "POST" })
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
 
     const { buildLessonPackage } = await import("./lesson.server");
-    return buildLessonPackage(data, key);
+
+    if (data.mode === "youtube") {
+      const { fetchYoutubeTranscript } = await import("./youtube.server");
+      const { title, text } = await fetchYoutubeTranscript(data.youtubeUrl ?? "");
+      const { youtubeUrl: _ignored, ...rest } = data;
+      return buildLessonPackage(
+        { ...rest, mode: "text", text: `${title}\n\n${text}` },
+        key,
+      );
+    }
+
+    const { youtubeUrl: _unused, ...payload } = data;
+    return buildLessonPackage(payload as never, key);
   });

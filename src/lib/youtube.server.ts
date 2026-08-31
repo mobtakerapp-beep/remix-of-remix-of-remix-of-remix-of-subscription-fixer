@@ -1,22 +1,11 @@
 /** Server-only helpers to pull a transcript from a YouTube video. */
 
+import { parseYoutubeId } from "./youtube-url";
+
+export { parseYoutubeId };
+
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36";
-
-export function parseYoutubeId(input: string): string | null {
-  const url = input.trim();
-  const patterns = [
-    /(?:youtube\.com\/watch\?[^#]*\bv=)([A-Za-z0-9_-]{11})/,
-    /(?:youtu\.be\/)([A-Za-z0-9_-]{11})/,
-    /(?:youtube\.com\/(?:embed|shorts|live|v)\/)([A-Za-z0-9_-]{11})/,
-  ];
-  for (const re of patterns) {
-    const m = url.match(re);
-    if (m?.[1]) return m[1];
-  }
-  if (/^[A-Za-z0-9_-]{11}$/.test(url)) return url;
-  return null;
-}
 
 function decodeEntities(s: string) {
   return s

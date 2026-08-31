@@ -95,6 +95,12 @@ const dict = {
     signInRequired: "سجّل دخولك أولًا لإنشاء الدروس.",
     googleSignIn: "المتابعة بحساب Google",
     orContinueWith: "أو سجّل بالإيميل",
+    tabYoutube: "رابط يوتيوب",
+    youtubePlaceholder: "الصق رابط فيديو يوتيوب هنا…",
+    youtubeHint: "نجلب النص المكتوب (الترجمة) للفيديو ونحوّله إلى درس وأسئلة.",
+    errYoutubeUrl: "رابط يوتيوب غير صالح",
+    errYoutubeCaptions: "هذا الفيديو بدون ترجمة نصية، جرّب فيديو آخر.",
+    errYoutubeFetch: "تعذّر جلب الفيديو، حاول مرة أخرى.",
   },
   en: {
     brand: "Smart Lesson Generator",
@@ -188,6 +194,12 @@ const dict = {
     signInRequired: "Please sign in first to generate lessons.",
     googleSignIn: "Continue with Google",
     orContinueWith: "or sign in with email",
+    tabYoutube: "YouTube link",
+    youtubePlaceholder: "Paste a YouTube video link here…",
+    youtubeHint: "We fetch the video captions and turn them into a lesson with questions.",
+    errYoutubeUrl: "Invalid YouTube link",
+    errYoutubeCaptions: "This video has no captions. Try another video.",
+    errYoutubeFetch: "Could not fetch the video, please try again.",
   },
 };
 

@@ -40,5 +40,17 @@ export const generateLessonPackage = createServerFn({ method: "POST" })
     if (!key) throw new Error("Missing LOVABLE_API_KEY");
 
     const { buildLessonPackage } = await import("./lesson.server");
-    return buildLessonPackage(data, key);
+
+    if (data.mode === "youtube") {
+      const { fetchYoutubeTranscript } = await import("./youtube.server");
+      const { title, text } = await fetchYoutubeTranscript(data.youtubeUrl ?? "");
+      const { youtubeUrl: _ignored, ...rest } = data;
+      return buildLessonPackage(
+        { ...rest, mode: "text", text: `${title}\n\n${text}` },
+        key,
+      );
+    }
+
+    const { youtubeUrl: _unused, ...payload } = data;
+    return buildLessonPackage(payload as never, key);
   });

@@ -5,8 +5,9 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { getSubscriptionStatus } from "./subscription.server";
 
 const InputSchema = z.object({
-  mode: z.enum(["text", "pdf", "image"]),
+  mode: z.enum(["text", "pdf", "image", "youtube"]),
   text: z.string().optional(),
+  youtubeUrl: z.string().optional(),
   fileName: z.string().optional(),
   /** data URL, e.g. data:application/pdf;base64,... */
   fileData: z.string().optional(),

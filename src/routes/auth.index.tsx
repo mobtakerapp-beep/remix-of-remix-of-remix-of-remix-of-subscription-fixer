@@ -11,33 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
 
 import { confirmExistingEmail, signUpDirect } from "@/lib/auth.functions";
 import { useI18n } from "@/lib/i18n";
-
-function GoogleIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-4" aria-hidden="true">
-      <path
-        fill="#EA4335"
-        d="M12 5.04c1.62 0 3.06.56 4.2 1.64l3.12-3.12C17.46 2.09 14.96 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84C6.73 7.07 9.14 5.04 12 5.04z"
-      />
-      <path
-        fill="#4285F4"
-        d="M23.5 12.27c0-.85-.08-1.66-.21-2.45H12v4.64h6.46c-.28 1.48-1.13 2.74-2.4 3.58l3.68 2.85c2.15-1.99 3.76-4.92 3.76-8.62z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M5.84 14.09A7.2 7.2 0 0 1 5.46 12c0-.73.14-1.43.38-2.09L2.18 7.07A11 11 0 0 0 1 12c0 1.77.42 3.44 1.18 4.93l3.66-2.84z"
-      />
-      <path
-        fill="#34A853"
-        d="M12 23c2.96 0 5.46-.98 7.28-2.66l-3.68-2.85c-1.02.69-2.33 1.1-3.6 1.1-2.86 0-5.27-2.03-6.16-4.9l-3.66 2.84C3.99 20.53 7.7 23 12 23z"
-      />
-    </svg>
-  );
-}
 
 export const Route = createFileRoute("/auth/")({
   head: () => ({

@@ -19,7 +19,17 @@ export type SignUpResult =
 export const signUpDirect = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => signUpSchema.parse(input))
   .handler(async ({ data }): Promise<SignUpResult> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let supabaseAdmin;
+    try {
+      ({ supabaseAdmin } = await import("@/integrations/supabase/client.server"));
+    } catch (e) {
+      console.error("[signUpDirect] admin client unavailable", e);
+      return {
+        ok: false,
+        code: "failed",
+        message: "تعذّر إنشاء الحساب مباشرة. يجب إيقاف تأكيد البريد من إعدادات الحساب.",
+      };
+    }
 
     const { error } = await supabaseAdmin.auth.admin.createUser({
       email: data.email,
@@ -61,7 +71,13 @@ const emailSchema = z.object({ email: z.string().trim().email().max(255) });
 export const confirmExistingEmail = createServerFn({ method: "POST" })
   .inputValidator((input: unknown) => emailSchema.parse(input))
   .handler(async ({ data }): Promise<{ ok: boolean }> => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let supabaseAdmin;
+    try {
+      ({ supabaseAdmin } = await import("@/integrations/supabase/client.server"));
+    } catch (e) {
+      console.error("[confirmExistingEmail] admin client unavailable", e);
+      return { ok: false };
+    }
 
     const { data: list, error: listError } = await supabaseAdmin.auth.admin.listUsers({
       page: 1,

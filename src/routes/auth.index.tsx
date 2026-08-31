@@ -90,6 +90,14 @@ function AuthPage() {
           password,
         });
         if (error) throw error;
+        // Persist the teacher name / school on the profile right away.
+        try {
+          await saveProfileFn({
+            data: { teacherName: teacherName.trim(), school: school.trim() },
+          });
+        } catch {
+          // non-blocking
+        }
         toast.success(ar ? "تم إنشاء الحساب وتسجيل الدخول!" : "Account created — you're signed in!");
         navigate({ to: "/" });
       } else {

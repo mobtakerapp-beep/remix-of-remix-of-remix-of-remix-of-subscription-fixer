@@ -31,15 +31,25 @@ export const signUpDirect = createServerFn({ method: "POST" })
       };
     }
 
-    const { error } = await supabaseAdmin.auth.admin.createUser({
-      email: data.email,
-      password: data.password,
-      email_confirm: true,
-      user_metadata: {
-        teacher_name: data.teacherName,
-        school: data.school,
-      },
-    });
+    let error: { message?: string } | null = null;
+    try {
+      ({ error } = await supabaseAdmin.auth.admin.createUser({
+        email: data.email,
+        password: data.password,
+        email_confirm: true,
+        user_metadata: {
+          teacher_name: data.teacherName,
+          school: data.school,
+        },
+      }));
+    } catch (e) {
+      console.error("[signUpDirect] admin call failed", e);
+      return {
+        ok: false,
+        code: "failed",
+        message: "تعذّر حفظ الحساب مباشرة. من فضلك أوقف تأكيد البريد من إعدادات تسجيل الدخول.",
+      };
+    }
 
     if (!error) return { ok: true };
 
@@ -79,10 +89,17 @@ export const confirmExistingEmail = createServerFn({ method: "POST" })
       return { ok: false };
     }
 
-    const { data: list, error: listError } = await supabaseAdmin.auth.admin.listUsers({
-      page: 1,
-      perPage: 200,
-    });
+    let list: { users: { id: string; email?: string | null; email_confirmed_at?: string | null }[] };
+    let listError: unknown = null;
+    try {
+      ({ data: list, error: listError } = await supabaseAdmin.auth.admin.listUsers({
+        page: 1,
+        perPage: 200,
+      }));
+    } catch (e) {
+      console.error("[confirmExistingEmail] admin call failed", e);
+      return { ok: false };
+    }
     if (listError) {
       console.error("[confirmExistingEmail] list", listError);
       return { ok: false };
@@ -94,11 +111,16 @@ export const confirmExistingEmail = createServerFn({ method: "POST" })
     if (!target) return { ok: false };
     if (target.email_confirmed_at) return { ok: true };
 
-    const { error } = await supabaseAdmin.auth.admin.updateUserById(target.id, {
-      email_confirm: true,
-    });
-    if (error) {
-      console.error("[confirmExistingEmail] update", error);
+    try {
+      const { error } = await supabaseAdmin.auth.admin.updateUserById(target.id, {
+        email_confirm: true,
+      });
+      if (error) {
+        console.error("[confirmExistingEmail] update", error);
+        return { ok: false };
+      }
+    } catch (e) {
+      console.error("[confirmExistingEmail] update failed", e);
       return { ok: false };
     }
     return { ok: true };

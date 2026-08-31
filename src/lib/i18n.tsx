@@ -95,6 +95,12 @@ const dict = {
     signInRequired: "سجّل دخولك أولًا لإنشاء الدروس.",
     googleSignIn: "المتابعة بحساب Google",
     orContinueWith: "أو سجّل بالإيميل",
+    tabYoutube: "رابط يوتيوب",
+    youtubePlaceholder: "الصق رابط فيديو يوتيوب هنا…",
+    youtubeHint: "نجلب النص المكتوب (الترجمة) للفيديو ونحوّله إلى درس وأسئلة.",
+    errYoutubeUrl: "رابط يوتيوب غير صالح",
+    errYoutubeCaptions: "هذا الفيديو بدون ترجمة نصية، جرّب فيديو آخر.",
+    errYoutubeFetch: "تعذّر جلب الفيديو، حاول مرة أخرى.",
   },
   en: {
     brand: "Smart Lesson Generator",

@@ -1,4 +1,4 @@
-import { BookOpen, Crown, LogOut, Shield, Sparkles, Zap } from "lucide-react";
+import { BookOpen, Crown, Home, LogOut, Shield, Sparkles, Zap } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";

@@ -3,7 +3,7 @@ name: Deployment package manager
 description: How lockfile selection affects publishing for this workspace
 ---
 
-Publishing selects the package manager from the repository's package-manager markers. Keep the workspace on its declared pnpm flow; unrelated Bun lock/config files can make publishing run Bun with a frozen lockfile and stop before dependencies install.
+Publishing selects the package manager from the repository's package-manager markers. Keep the workspace on its declared pnpm flow; unrelated Bun lock/config files can make publishing run Bun with a frozen lockfile and stop before dependencies install. When autodetection still selects Bun, explicitly set the Replit packager language to Node.js.
 
 **Why:** The workspace uses pnpm-specific lifecycle checks and a pnpm lockfile, while stale Bun markers caused the deployment installer to select Bun and reject the dependency graph.
 
